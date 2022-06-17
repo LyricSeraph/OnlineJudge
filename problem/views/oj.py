@@ -44,6 +44,8 @@ class ProblemAPI(APIView):
                     problem["my_status"] = acm_problems_status.get(str(problem["id"]), {}).get("status")
                 else:
                     problem["my_status"] = oi_problems_status.get(str(problem["id"]), {}).get("status")
+                if problem["my_status"] != 0:
+                    problem["answer"] = None
 
     def get(self, request):
         # 问题详情页
@@ -93,6 +95,7 @@ class ContestProblemAPI(APIView):
                 problems_status = profile.oi_problems_status.get("contest_problems", {})
             for problem in queryset_values:
                 problem["my_status"] = problems_status.get(str(problem["id"]), {}).get("status")
+                problem["answer"] = None
 
     @check_contest_permission(check_type="problems")
     def get(self, request):
