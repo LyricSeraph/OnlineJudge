@@ -12,7 +12,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "oj.settings")
 django.setup()
 from django.conf import settings
 from account.models import User, UserProfile, AdminType, ProblemPermission
-from problem.models import Problem, ProblemTag, ProblemDifficulty, ProblemRuleType
+from problem.models import Problem, ProblemTag, ProblemRuleType
+from constants import Difficulty
 
 admin_type_map = {
     0: AdminType.REGULAR_USER,
@@ -156,7 +157,7 @@ def import_problems():
                 creator_id = default_creator.id
             data["created_by_id"] = creator_id
             data.pop("created_by")
-            data["difficulty"] = ProblemDifficulty.Mid
+            data["difficulty"] = Difficulty.MID
             if data["spj_language"]:
                 data["spj_language"] = languages_map[data["spj_language"]]
             data["samples"] = json.loads(data["samples"])

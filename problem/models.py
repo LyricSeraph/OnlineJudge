@@ -19,12 +19,6 @@ class ProblemRuleType(Choices):
     OI = "OI"
 
 
-class ProblemDifficulty(object):
-    High = "High"
-    Mid = "Mid"
-    Low = "Low"
-
-
 class ProblemIOMode(Choices):
     standard = "Standard IO"
     file = "File IO"

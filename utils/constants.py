@@ -28,9 +28,12 @@ class CacheKey:
 
 
 class Difficulty(Choices):
+    BEGINNER = "Beginner"
     LOW = "Low"
     MID = "Mid"
     HIGH = "High"
+    VERY_HIGH = "VeryHigh"
+    CHALLENGE = "Challenge"
 
 
 CONTEST_PASSWORD_SESSION_KEY = "contest_password"
