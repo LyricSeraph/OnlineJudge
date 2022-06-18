@@ -79,8 +79,9 @@ class ProblemAPI(APIView):
         difficulty = request.GET.get("difficulty")
         if difficulty:
             problems = problems.filter(difficulty=difficulty)
-        # 根据profile 为做过的题目添加标记
+        problems = problems.order_by("_id")
         data = self.paginate_data(request, problems, ProblemSerializer)
+        # 根据profile 为做过的题目添加标记
         self._add_problem_status(request, data)
         return self.success(data)
 
