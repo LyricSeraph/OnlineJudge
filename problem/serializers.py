@@ -71,6 +71,7 @@ class CreateOrEditProblemSerializer(serializers.Serializer):
     answer = serializers.CharField(allow_blank=True, allow_null=True)
     source = serializers.CharField(max_length=256, allow_blank=True, allow_null=True)
     share_submission = serializers.BooleanField()
+    public_cases = serializers.JSONField(allow_null=True)
 
 
 class CreateProblemSerializer(CreateOrEditProblemSerializer):
@@ -153,6 +154,9 @@ class ExportProblemSerializer(serializers.ModelSerializer):
     template = serializers.SerializerMethodField()
     source = serializers.SerializerMethodField()
     tags = serializers.SlugRelatedField(many=True, slug_field="name", read_only=True)
+    answer = serializers.SerializerMethodField()
+    public_cases = serializers.SerializerMethodField()
+
 
     def get_display_id(self, obj):
         return obj._id
@@ -190,12 +194,18 @@ class ExportProblemSerializer(serializers.ModelSerializer):
     def get_source(self, obj):
         return obj.source or f"{SysOptions.website_name} {SysOptions.website_base_url}"
 
+    def get_answer(self, obj):
+        return self._html_format_value(obj.answer)
+
+    def get_public_cases(self, obj):
+        return obj.public_cases
+
     class Meta:
         model = Problem
         fields = ("display_id", "title", "description", "tags",
                   "input_description", "output_description",
                   "test_case_score", "hint", "time_limit", "memory_limit", "samples",
-                  "template", "spj", "rule_type", "source", "template")
+                  "template", "spj", "rule_type", "source", "template", "answer", "public_cases")
 
 
 class AddContestProblemSerializer(serializers.Serializer):
@@ -256,6 +266,8 @@ class ImportProblemSerializer(serializers.Serializer):
     source = serializers.CharField(max_length=200, allow_blank=True, allow_null=True)
     answers = serializers.ListField(child=AnswerSerializer())
     tags = serializers.ListField(child=serializers.CharField())
+    answer = FormatValueSerializer()
+    public_cases = serializers.ListField(child=serializers.CharField(), allow_empty=True)
 
 
 class FPSProblemSerializer(serializers.Serializer):

@@ -1,8 +1,10 @@
 import ipaddress
+import os
 
 from account.decorators import login_required, check_contest_permission
 from contest.models import ContestStatus, ContestRuleType
 from judge.tasks import judge_task
+from oj import settings
 from options.options import SysOptions
 # from judge.dispatcher import JudgeDispatcher
 from problem.models import Problem, ProblemRuleType
@@ -204,3 +206,39 @@ class SubmissionExistsAPI(APIView):
         return self.success(request.user.is_authenticated and
                             Submission.objects.filter(problem_id=request.GET["problem_id"],
                                                       user_id=request.user.id).exists())
+
+
+class SubmissionHintAPI(APIView):
+
+    def get(self, request):
+        submission_id = request.GET.get("submission_id")
+
+        if not submission_id:
+            return self.error("Parameter error, submission_id is required")
+        try:
+            submission = Submission.objects.get(id=submission_id)
+        except Submission.DoesNotExist:
+            return self.error("Submission does not exists")
+
+        case_index = None
+        cases = submission.info["data"]
+        for case in cases:
+            if case["result"] != 0:
+                case_index = case["test_case"]
+                break
+        if not case_index:
+            return self.success("All cases passed, no more hint")
+
+        problem = submission.problem
+        if not problem.public_cases or case_index not in problem.public_cases:
+            return self.error(f"No hint for the corresponding error test case")
+
+        test_case_dir = os.path.join(settings.TEST_CASE_DIR, problem.test_case_id)
+        if not os.path.isdir(test_case_dir):
+            return self.error("Test case does not exists: ", test_case_dir)
+        data = {"test_case": case_index, "input": "", "output": ""}
+        with open(os.path.join(test_case_dir, f"{case_index}.in")) as file:
+            data["input"] = file.read()
+        with open(os.path.join(test_case_dir, f"{case_index}.out")) as file:
+            data["output"] = file.read()
+        return self.success(data)

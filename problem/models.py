@@ -76,6 +76,7 @@ class Problem(models.Model):
     statistic_info = JSONField(default=dict)
     share_submission = models.BooleanField(default=False)
     answer = RichTextField(null=True)
+    public_cases = JSONField(default=list)
 
     class Meta:
         db_table = "problem"

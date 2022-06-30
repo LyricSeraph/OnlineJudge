@@ -160,6 +160,29 @@ class TestCaseAPI(CSRFExemptAPIView, TestCaseZipProcessor):
         return self.success({"id": test_case_id, "info": info, "spj": spj})
 
 
+class ShowTestCaseAPI(APIView):
+
+    def get(self, request):
+        problem_id = request.GET.get("problem_id")
+        case_index = request.GET.get("case_index")
+        if not problem_id or not case_index:
+            return self.error("Parameter error, problem_id and case_index is required")
+        try:
+            problem = Problem.objects.get(id=problem_id)
+        except Problem.DoesNotExist:
+            return self.error("Problem does not exists")
+
+        test_case_dir = os.path.join(settings.TEST_CASE_DIR, problem.test_case_id)
+        if not os.path.isdir(test_case_dir):
+            return self.error("Test case does not exists")
+        data = {"input": "", "output": ""}
+        with open(os.path.join(test_case_dir, f"{case_index}.in")) as file:
+            data["input"] = file.read()
+        with open(os.path.join(test_case_dir, f"{case_index}.in")) as file:
+            data["output"] = file.read()
+        return self.success(data)
+
+
 class CompileSPJAPI(APIView):
     @validate_serializer(CompileSPJSerializer)
     def post(self, request):
