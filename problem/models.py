@@ -66,7 +66,7 @@ class Problem(models.Model):
     rule_type = models.TextField()
     visible = models.BooleanField(default=True)
     difficulty = models.TextField()
-    tags = models.ManyToManyField(ProblemTag)
+    tags = models.ManyToManyField(ProblemTag, blank=True)
     source = models.TextField(null=True)
     # for OI mode
     total_score = models.IntegerField(default=0)
