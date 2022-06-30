@@ -535,6 +535,10 @@ class ExportProblemAPI(APIView):
     def process_one_problem(self, zip_file, user, problem, index):
         info = ExportProblemSerializer(problem).data
         info["answers"] = self.choose_answers(user, problem=problem)
+        if "answer" not in info:
+            info["answer"] = ""
+        if "public_cases" not in info:
+            info["public_cases"] = []
         compression = zipfile.ZIP_DEFLATED
         zip_file.writestr(zinfo_or_arcname=f"{index}/problem.json",
                           data=json.dumps(info, indent=4),

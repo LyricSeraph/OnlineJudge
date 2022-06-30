@@ -234,9 +234,9 @@ class TestCaseScoreSerializer(serializers.Serializer):
 
 
 class TemplateSerializer(serializers.Serializer):
-    prepend = serializers.CharField()
-    template = serializers.CharField()
-    append = serializers.CharField()
+    prepend = serializers.CharField(allow_blank=True)
+    template = serializers.CharField(allow_blank=True)
+    append = serializers.CharField(allow_blank=True)
 
 
 class SPJSerializer(serializers.Serializer):
@@ -265,9 +265,9 @@ class ImportProblemSerializer(serializers.Serializer):
     rule_type = serializers.ChoiceField(choices=ProblemRuleType.choices())
     source = serializers.CharField(max_length=200, allow_blank=True, allow_null=True)
     answers = serializers.ListField(child=AnswerSerializer())
-    tags = serializers.ListField(child=serializers.CharField())
-    answer = FormatValueSerializer()
-    public_cases = serializers.ListField(child=serializers.CharField(), allow_empty=True)
+    tags = serializers.ListField(child=serializers.CharField(), allow_empty=True)
+    answer = FormatValueSerializer(required=False)
+    public_cases = serializers.ListField(child=serializers.CharField(), allow_empty=True, required=False)
 
 
 class FPSProblemSerializer(serializers.Serializer):
