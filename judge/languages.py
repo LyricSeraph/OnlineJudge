@@ -145,7 +145,7 @@ _py2_lang_config = {
     },
     "run": {
         "command": "/usr/bin/python {exe_path}",
-        "seccomp_rule": "general",
+        "seccomp_rule": {ProblemIOMode.standard: "general", ProblemIOMode.file: "python_file_io"},
         "env": default_env
     }
 }
@@ -168,7 +168,7 @@ _py3_lang_config = {
     },
     "run": {
         "command": "/usr/bin/python3 {exe_path}",
-        "seccomp_rule": "general",
+        "seccomp_rule": {ProblemIOMode.standard: "general", ProblemIOMode.file: "python_file_io"},
         "env": default_env + ["PYTHONIOENCODING=utf-8"]
     }
 }

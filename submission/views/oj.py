@@ -221,6 +221,8 @@ class SubmissionHintAPI(APIView):
             return self.error("Submission does not exists")
 
         case_index = None
+        if "data" not in submission.info:
+            return self.success("Waiting for judge")
         cases = submission.info["data"]
         for case in cases:
             if case["result"] != 0:
